@@ -1,6 +1,17 @@
+###############################################################
+#This is a game of lines
+#Game of lines. Rules: Each Player has 3 stones. There are 9 dots on the field. Each dot is connected with all the adjacent
+#dots. Each Player Starts on their line on the opposites ends of the field. The stones can only move on the lines and
+#have to stop when they get to a dot. Each Player gets to make a single move with a single stone each time. (Just Like Chess)
+#The Goal is to line up your 3 stone in a straight line anywhere on the field besides your starting line.
+#(During Development came up with an idea to have the same game in 3D where you have to take over a plane rather then a line)
+###############################################################
 from pygame import *
 import pygame
 from copy import deepcopy
+import tkinter
+from sys import exit
+
 grid_positioning={(0,0):(6,10),
                   (0,1):(275,10),
                   (0,2):(540,10),
@@ -24,6 +35,18 @@ reverse_grid_positioning={
 game_map= [["R1","R2","R3"],
            [ 0,  0,   0],
            ["B1","B2","B3"]]
+
+reset=deepcopy(game_map)
+
+class AI:
+    def __init__(self,Game):
+        self.game=None
+        self.map=game_map
+
+
+
+
+
 
 class Stone:
     """
@@ -79,7 +102,12 @@ class Game :
                           pygame.Rect(540,540,100,100),]
 
         self.stone_grid=[]
-
+    def make_ai_move(self):
+        for i in game_map:
+            for j in range(len(i)):
+                if type(i[j])==str and i[j][0]=="R":
+                    print(i[j])
+        print(game_map)
     def valid_move(self,fromer,toer):
         """
 
@@ -206,6 +234,11 @@ class Game :
         running = True
         while running:
             event = pygame.event.poll()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    exit()
+            elif event.type == QUIT:
+                exit()
             if event.type == pygame.MOUSEBUTTONDOWN and mouse.get_pressed()[0]==1 :
                 for i in range(len(self.stone_rects)):
                     if event.pos[0] in \
@@ -214,56 +247,128 @@ class Game :
             pygame.display.update()
 
 
+class Game_GUI:
+    def __init__(self,master):
+        self.g=None
+        self.master=master
+        self.master.minsize(width=700, height=500)
+        self.master.maxsize(width=1550, height=1100)
+        self.master.title("Game of Lines")
+        self.label = tkinter.Label(master, text="Start Game")
+        self.label.pack()
+        #main mode button
+        self.number_button=tkinter.Button(self.master, text="2 Player mode", command=self.main)
+        self.number_button.pack(padx=30,pady=10)
+        #Live mode button
+        # self.live_button=tkinter.Button(self.master, text="Live", command=self.get_live)
+        # self.live_button.pack(padx=30,pady=10)
+        # #Close button
+
+        #Helper button
+        self.help_button=tkinter.Button(self.master, text="RULES!", command=self.helper)
+        self.help_button.pack(side="top")
+        #Helping Text
+        self.text_helper=tkinter.StringVar()
+        self.words=tkinter.Label(master,textvariable=self.text_helper)
+        self.words.pack()
+
+        #exit button
+        self.close_button=tkinter.Button(self.master, text="Close", command=exit)
+        self.close_button.pack(padx=30,pady=10)
+
+
+    def helper(self):
+        """
+        A helping hand for the user.
+        :return: None
+        """
+        self.text_helper.set("""
+            Rules: Each Player has 3 stones. There are 9 dots on the field. Each dot is connected with all the adjacent dots. 
+
+            Each Player Starts on their line on the opposites ends of the field. The stones can only move on the lines 
+            
+            and can only move on empty spots and only move one step ahead. Each Player gets to make a single move with a single stone each time. (Just Like Chess)
+
+            The Goal is to line up your 3 stone in a straight line anywhere on the field besides your starting line.""")
+
+    def main(self):
+        #Initializer for the game
+        self.g=Game('s','g')
+        #creating the screen
+        self.g.getSc()
+        #checking condition 1
+        check1=False
+        #checking condition 2
+        check2=False
+        #Keeps track of whoese turn it is
+        turner=True
+        point_to=None
+        #the game loop
+        self.g.screen.blit(pygame.image.load("Black_Move.png"),(0,600))
+        moving_stone=None
+
+        while True:
+
+            point_from = self.g.detect_collision()
+            stone=game_map[point_from[0]][point_from[1]]
+            #Pick the stone we are moving
+            #If we picked a spot with a stone in it
+            if stone !=0:
+                moving_stone=game_map[point_from[0]][point_from[1]]
+                check1=True
+                point_to=self.g.detect_collision()
+            #Position of motion towards
+            if point_to!=None:
+                stone=game_map[point_to[0]][point_to[1]]
+            #makes sure the correct player is taking the turn
+            if moving_stone != None:
+                if stone==0:
+                    if (moving_stone[0]=="R" and turner==False) or (moving_stone[0]=="B" and turner==True):
+                        check2=True
+                        turner=not turner
+                    else:
+                        check2=False
+            #If all the conditions are satisfied then we make a move
+            if check1 and check2:
+                self.g.make_move(moving_stone,point_to[0],point_to[1])
+                if turner:
+                    self.g.screen.blit(pygame.image.load("Black_Move.png"),(0,600))
+                else:
+                    self.g.screen.blit(pygame.image.load("Red_Move.png"),(0,600))
+            if not turner:
+                if self.g.check_win("B"):
+                    self.g.screen.blit(pygame.image.load("Black_Win.png"),(0,600))
+                    # break
+            else:
+                if self.g.check_win("R"):
+                    self.g.screen.blit(pygame.image.load("Red_Wins.png"),(0,600))
+
+
 
 def main():
-    #Initializer for the game
-    g=Game('s','g')
-    #creating the screen
-    g.getSc()
-    #checking condition 1
-    check1=False
-    #checking condition 2
-    check2=False
-    #Keeps track of whoese turn it is
-    turner=True
-    point_to=None
-    #the game loop
-    g.screen.blit(pygame.image.load("Black_Move.png"),(0,600))
-    moving_stone=None
-    while True:
+    game=Game('s','g')
+    game.make_ai_move()
+    print()
+    # x=Game_GUI(tkinter.Tk())
+    # x.master.mainloop()
+if __name__=="__main__":
+    main()
 
-        point_from = g.detect_collision()
-        stone=game_map[point_from[0]][point_from[1]]
-        #Pick the stone we are moving
-        #If we picked a spot with a stone in it
-        if stone !=0:
-            moving_stone=game_map[point_from[0]][point_from[1]]
-            check1=True
-            point_to=g.detect_collision()
-        #Position of motion towards
-        if point_to!=None:
-            stone=game_map[point_to[0]][point_to[1]]
-        #makes sure the correct player is taking the turn
-        if moving_stone != None:
-            if stone==0:
-                if (moving_stone[0]=="R" and turner==False) or (moving_stone[0]=="B" and turner==True):
-                    check2=True
-                    turner=not turner
-                else:
-                    check2=False
-        #If all the conditions are satisfied then we make a move
-        if check1 and check2:
-            g.make_move(moving_stone,point_to[0],point_to[1])
-            if turner:
-                g.screen.blit(pygame.image.load("Black_Move.png"),(0,600))
-            else:
-                g.screen.blit(pygame.image.load("Red_Move.png"),(0,600))
-        if not turner:
-            if g.check_win("B"):
-                g.screen.blit(pygame.image.load("Black_Win.png"),(0,600))
-                # break
-        else:
-            if g.check_win("R"):
-                g.screen.blit(pygame.image.load("Red_Wins.png"),(0,600))
 
-main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
