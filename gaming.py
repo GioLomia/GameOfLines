@@ -21,6 +21,16 @@ grid_positioning={(0,0):(6,10),
                   (2,0):(10,540),
                   (2,1):(275,540),
                   (2,2):(545,535)}
+
+grid_positioning_picked={(0,0):(16,20),
+                  (0,1):(285,20),
+                  (0,2):(550,20),
+                  (1,0):(16,285),
+                  (1,1):(285,290),
+                  (1,2):(550,285),
+                  (2,0):(20,550),
+                  (2,1):(285,550),
+                  (2,2):(555,535)}
 reverse_grid_positioning={
                     (6,10):(0,0),
                     (275,10):(0,1),
@@ -160,6 +170,7 @@ class Game :
                 except:
                      return "Select a correct space to put your stone in."
 
+
         if game_map[new_y][new_x]==0 and self.valid_move([current_y,current_x],[new_y,new_x]):
             #Update Position
             self.players_stones[correspond[stone_to_move[0]]][correspond[stone_to_move[1]]].position=(new_y,new_x)
@@ -187,6 +198,7 @@ class Game :
         for i in range(3):
             gameDis.blit(self.players_stones[1][0].image,self.players_stones[1][i].position)
         self.screen=gameDis
+
     def check_win(self,check_for):
         game_mapx=deepcopy(game_map)
 
@@ -348,9 +360,8 @@ class Game_GUI:
 def main():
     game=Game('s','g')
     game.make_ai_move()
-    print()
-    # x=Game_GUI(tkinter.Tk())
-    # x.master.mainloop()
+    x=Game_GUI(tkinter.Tk())
+    x.master.mainloop()
 if __name__=="__main__":
     main()
 
