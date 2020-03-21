@@ -85,7 +85,7 @@ class Game :
     """
 
     width,height=600,700
-    bg = pygame.image.load("New_Fieald.bmp")
+    bg = pygame.image.load("assets/New_Fieald.bmp")
 
     def __init__(self,player1,player2):
 #################################################Screen
@@ -93,13 +93,13 @@ class Game :
 #################################################Screen
         self.players=[player1,player2]
         self.players_stones=\
-                            ([Stone("Stone_Red_Small.png",1,grid_positioning[(0,0)],self.players[0]),  #Player1 Red Stones
-                              Stone("Stone_Red_Small.png",2,grid_positioning[(0,1)],self.players[0]),
-                              Stone("Stone_Red_Small.png",3,grid_positioning[(0,2)],self.players[0])],
+                            ([Stone("assets/Stone_Red_Small.png",1,grid_positioning[(0,0)],self.players[0]),  #Player1 Red Stones
+                              Stone("assets/Stone_Red_Small.png",2,grid_positioning[(0,1)],self.players[0]),
+                              Stone("assets/Stone_Red_Small.png",3,grid_positioning[(0,2)],self.players[0])],
 
-                             [Stone("Stone_Black_Small.png",1,grid_positioning[(2,0)],self.players[1]), #Player2 Black Stones
-                              Stone("Stone_Black_Small.png",2,grid_positioning[(2,1)],self.players[1]),
-                              Stone("Stone_Black_Small.png",3,grid_positioning[(2,2)],self.players[1])])
+                             [Stone("assets/Stone_Black_Small.png",1,grid_positioning[(2,0)],self.players[1]), #Player2 Black Stones
+                              Stone("assets/Stone_Black_Small.png",2,grid_positioning[(2,1)],self.players[1]),
+                              Stone("assets/Stone_Black_Small.png",3,grid_positioning[(2,2)],self.players[1])])
 
         self.stone_rects=[pygame.Rect(10,10,100,100),
                           pygame.Rect(275,10,100,100),
@@ -180,7 +180,7 @@ class Game :
                              [int(correspond[stone_to_move[1]])].position])
             game_map[new_y][new_x]=stone_to_move
             game_map[current_y][current_x]=0
-            self.screen.blit(pygame.image.load("Replace.png"),grid_positioning[(current_y,current_x)])
+            self.screen.blit(pygame.image.load("assets/Replace.png"),grid_positioning[(current_y,current_x)])
         else:
             return "Can not make this move"
         return game_map
@@ -190,7 +190,7 @@ class Game :
         Screan Generator.
         :return: None
         """
-        backg=pygame.image.load("New_Fieald.bmp")
+        backg=pygame.image.load("assets/New_Fieald.bmp")
         gameDis=pygame.display.set_mode((self.width,self.height))
         gameDis.blit(backg,(0,0))
         for i in range(3):
@@ -271,10 +271,6 @@ class Game_GUI:
         #main mode button
         self.number_button=tkinter.Button(self.master, text="2 Player mode", command=self.main)
         self.number_button.pack(padx=30,pady=10)
-        #Live mode button
-        # self.live_button=tkinter.Button(self.master, text="Live", command=self.get_live)
-        # self.live_button.pack(padx=30,pady=10)
-        # #Close button
 
         #Helper button
         self.help_button=tkinter.Button(self.master, text="RULES!", command=self.helper)
@@ -316,7 +312,7 @@ class Game_GUI:
         turner=True
         point_to=None
         #the game loop
-        self.g.screen.blit(pygame.image.load("Black_Move.png"),(0,600))
+        self.g.screen.blit(pygame.image.load("assets/Black_Move.png"),(0,600))
         moving_stone=None
 
         while True:
@@ -344,16 +340,16 @@ class Game_GUI:
             if check1 and check2:
                 self.g.make_move(moving_stone,point_to[0],point_to[1])
                 if turner:
-                    self.g.screen.blit(pygame.image.load("Black_Move.png"),(0,600))
+                    self.g.screen.blit(pygame.image.load("assets/Black_Move.png"),(0,600))
                 else:
-                    self.g.screen.blit(pygame.image.load("Red_Move.png"),(0,600))
+                    self.g.screen.blit(pygame.image.load("assets/Red_Move.png"),(0,600))
             if not turner:
                 if self.g.check_win("B"):
-                    self.g.screen.blit(pygame.image.load("Black_Win.png"),(0,600))
+                    self.g.screen.blit(pygame.image.load("assets/Black_Win.png"),(0,600))
                     # break
             else:
                 if self.g.check_win("R"):
-                    self.g.screen.blit(pygame.image.load("Red_Wins.png"),(0,600))
+                    self.g.screen.blit(pygame.image.load("assets/Red_Wins.png"),(0,600))
 
 
 
